@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Genel stil */
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #2a2a2a, #121212); /* Gradient arka plan */
-            color: #1e90ff; /* Mavi yazı rengi */
+            background: linear-gradient(135deg, #2a2a2a, #121212);
+            color: #1e90ff;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,7 +17,6 @@
             flex-direction: column;
             text-align: center;
         }
-
         h1 {
             font-size: 3em;
             color: #1e90ff;
@@ -28,8 +26,6 @@
             font-weight: bold;
             text-shadow: 0 0 15px rgba(30, 144, 255, 0.7);
         }
-
-        /* Chat kutusu */
         #chatbox {
             width: 100%;
             max-width: 650px;
@@ -45,19 +41,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            transition: all 0.3s ease;
         }
-
-        #chatbox::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        #chatbox::-webkit-scrollbar-thumb {
-            background-color: #1e90ff;
-            border-radius: 10px;
-        }
-
-        /* Mesajlar */
         .message {
             margin: 10px 0;
             padding: 12px;
@@ -66,20 +50,15 @@
             max-width: 80%;
             text-align: left;
             word-wrap: break-word;
-            animation: fadeIn 0.5s ease-out;
         }
-
         .user {
             background-color: #444;
             margin-left: auto;
             text-align: right;
         }
-
         .bot {
             background-color: #222;
         }
-
-        /* Input alanı ve buton */
         input {
             width: 75%;
             padding: 14px;
@@ -90,15 +69,7 @@
             background-color: #333;
             color: white;
             outline: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(30, 144, 255, 0.4);
         }
-
-        input:focus {
-            background-color: #444;
-            border: 2px solid #1e90ff;
-        }
-
         button {
             padding: 14px 25px;
             background-color: #1e90ff;
@@ -107,126 +78,66 @@
             color: white;
             font-size: 1.2em;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(30, 144, 255, 0.3);
             margin-left: 10px;
-        }
-
-        button:hover {
-            background-color: #4682b4;
-            transform: scale(1.05);
-        }
-
-        button:active {
-            transform: scale(1);
-            background-color: #3b8cc4;
-        }
-
-        /* Medya içerik */
-        #mediaContent {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        iframe, img {
-            width: 90%;
-            max-height: 300px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(30, 144, 255, 0.3);
-        }
-
-        audio {
-            margin-top: 20px;
-            width: 90%;
-            border-radius: 8px;
-            background-color: #333;
-        }
-
-        /* Animasyon */
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Yükleme animasyonu */
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #1e90ff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 2s linear infinite;
-            margin-top: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <h1>werarew AI</h1>
+    <h1>AI</h1>
     <div id="chatbox">
-        <p class="message bot"><strong>Bot:</strong> Merhaba! Size nasıl yardımcı olabilirim?</p>
+        <p class="message bot"><strong>Bot:</strong> Salam! Necə kömək edə bilərəm?</p>
     </div>
     <div style="display: flex;">
-        <input type="text" id="userInput" placeholder="Sorunuzu yazın...">
+        <input type="text" id="userInput" placeholder="Sualınızı yazın...">
         <button onclick="sendMessage()">Gönder</button>
     </div>
-    
-    <div id="mediaContent"></div>
 
     <script>
+        const responses = {
+            "az": {
+                "salam": "Salam!",
+                "bal xarab olurmu": "Xeyr, bal tərkibinə görə xarab olmur.",
+                "günəş sistemində neçə planet var": "Günəş sistemində 8 planet var."
+            },
+            "tr": {
+                "merhaba": "Merhaba!",
+                "bal gerçekden bozulmazmı": "Evet, bal kimyasal yapısı nedeniyle bozulmaz.",
+                "güneş sisteminde kaç gezegen var": "Güneş sisteminde 8 gezegen vardır."
+            },
+            "en": {
+                "hello": "Hello!",
+                "does honey really never spoil": "Yes, honey does not spoil due to its chemical structure.",
+                "how many planets are in the solar system": "There are 8 planets in the solar system."
+            }
+        };
+
+        function detectLanguage(input) {
+            for (let lang in responses) {
+                if (responses[lang][input]) {
+                    return lang;
+                }
+            }
+            return "az"; // Varsayılan dil (Azerbaycanca)
+        }
+
+        function getResponse(input) {
+            let lang = detectLanguage(input.toLowerCase());
+            return responses[lang][input] || "Bağışlayın, bunu başa düşmədim.";
+        }
+
         function sendMessage() {
             let input = document.getElementById("userInput").value;
             let chatbox = document.getElementById("chatbox");
-            let mediaContent = document.getElementById("mediaContent");
-            
+
             if (input.trim() === "") return;
 
-            chatbox.innerHTML += `<p class="message user"><strong>Sen:</strong> ${input}</p>`;
+            chatbox.innerHTML += `<p class="message user"><strong>Siz:</strong> ${input}</p>`;
             document.getElementById("userInput").value = "";
 
             let response = getResponse(input.toLowerCase());
             chatbox.innerHTML += `<p class="message bot"><strong>Bot:</strong> ${response}</p>`;
 
-            chatbox.scrollTop = chatbox.scrollHeight; // Scroll to bottom
-
-            // Clear previous media content
-            mediaContent.innerHTML = "";
-
-            // Display media content if applicable
-            if (response.includes("resim:")) {
-                let imageUrl = response.split("resim:")[1].trim();
-                mediaContent.innerHTML += `<img src="${imageUrl}" alt="Resim">`;
-            } else if (response.includes("video:")) {
-                let videoUrl = response.split("video:")[1].trim();
-                mediaContent.innerHTML += `<iframe src="${videoUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            } else if (response.includes("ses:")) {
-                let audioUrl = response.split("ses:")[1].trim();
-                mediaContent.innerHTML += `<audio controls><source src="${audioUrl}" type="audio/mpeg">Tarayıcınız ses çalmıyor.</audio>`;
-            } else if (response === "loading") {
-                mediaContent.innerHTML += `<div class="loader"></div>`;
-            }
-        }
-
-        function getResponse(input) {
-            let responses = {
-                "merhaba": "Merhaba",
-                "bal gerçekden bozulmazmı": "evet bal kimyasal nedeni ile bozulmaz bunun sebebi balın düşük nem yüksek asit içermesidir buda bekterilerin üremesini engeler",
-                "güneş sisteminde kaç gezegen var": " güneş sisteminde toplam 8 gezegen var bunlar merkür venüs dünya mars jubuter satrün uranüs neptün dür ",
-                "no kod uyqulamaları kulanmakmı yoksa kod yazmakmı": "no kod uyqulamaları kulanmakla kod yazmaqın kendine göre avantajları ve dezajantajları var mesala no kod uyqulamaları daha kolaydır amma kod yazmak no koda göre daha zordur amma kod yazmak daha fazla esnekdir",
-            };
-            
-            // Simulate loading effect for demonstration
-            if (input.toLowerCase().includes("yükle")) {
-                setTimeout(() => {
-                    return "Yükleme tamamlandı!";
-                }, 2000);
-            }
-            
-            return responses[input] || "Üzgünüm, bunu anlayamadım.";
+            chatbox.scrollTop = chatbox.scrollHeight;
         }
     </script>
 </body>
